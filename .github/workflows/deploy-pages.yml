@@ -1,0 +1,58 @@
+# GitHub Pages 公開ワークフロー（薄い構成 / 再ビルドはしない）
+#
+# このファイルは GitLab 側リポジトリで版管理し、GitLab CI の deploy ジョブが
+# 公開先 GitHub リポジトリの .github/workflows/deploy-pages.yml へ配置する。
+# 直接 GitHub 側で編集せず、GitLab 側のこのテンプレートを編集すること。
+#
+# 役割: GitLab で生成済みの静的成果物（リポジトリ直下）を Pages へ配信するだけ。
+# Pages の Source は GitHub リポジトリ Settings → Pages → Source = "GitHub Actions"。
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GITHUB_TOKEN への Pages デプロイ権限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時実行は1つに集約（古い実行はキャンセル）
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # .git / .github / ワークフロー自身を除外して公開物だけを staging
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='_site' \
+            ./ _site/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
