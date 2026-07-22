@@ -1,0 +1,1 @@
+import{q as a,m as e,ag as o,aj as n}from"./dev-status.CRfGBqqT.js";const r=a({key:e(),label:e(),icon:e().optional(),sourceKey:e()}).strict(),c=o("systemPage",r,[{key:"status",label:"システム稼働状況",icon:"🖥️",sourceKey:"system-status"}]),i=c.all;function y(){return i.filter(s=>n(s.sourceKey)!==void 0)}function m(s){return y().find(t=>t.key===s)}export{y as d,m as f};

@@ -1,0 +1,1 @@
+import{W as o}from"./dev-status.CRfGBqqT.js";const a=o("web:storage");function c(r,e){try{const t=localStorage.getItem(r);return t===null?null:e(t)}catch(t){return a.warn(`[storage] read "${r}":`,t),null}}function g(r,e){try{localStorage.setItem(r,e)}catch(t){a.warn(`[storage] write "${r}":`,t)}}export{c as r,g as w};
